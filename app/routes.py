@@ -40,6 +40,7 @@ def login():
             
             next_page = request.args.get('next')
 
+            # For security only redirect if path is relative. So redirect stays within the same site than application.
             if not next_page or url_parse(next_page).netloc != '':
                 next_page = url_for('index')
             
