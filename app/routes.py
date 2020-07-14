@@ -93,4 +93,4 @@ def user(username):
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
-        db.session.commit()
+        db.session.commit() # user adds to session automatically when we invoke current_user so we don't need to db.session.add()
