@@ -46,3 +46,8 @@ class EditProfileForm(FlaskForm):
 
             if user is not None:
                 raise ValidationError('This username is already exists. Please use a different username')
+
+# use empty for to trigger post requests since they are more protected from CSRF attacks
+# CSRF token implemented as a hidden field and added automatically by Flask-WTF
+class EmptyForm(FlaskForm):
+    submit = SubmitField('Submit')
