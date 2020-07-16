@@ -136,4 +136,32 @@ def follow(username):
             flash('User {} not found.'.format(username))
             return redirect(url_for('index'))
     else:
+        # the only reason why the validate_on_submit() call can fail is if the CSRF token is missing or invalid, 
+        # so in that case we just redirect the application back to the home page.
+        return redirect(url_for('index'))
+
+
+@app.route('/unfollow/<username>', methods=['POST'])
+@login_required
+def unfollow(username):
+    form = EmptyForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
+
+        if user is not None:
+            if user is not current_user:
+                current_user.unfollow(user)
+                db.session.commit()
+                flash('You are not following {}.'.format(username))
+                return redirect(url_for('user', username=username))
+            else:
+                flash('You cannot unfollow yourself!')
+                return redirect(url_for('user', username=username))
+        else:
+            flash('User {} not found.'.format(username))
+            return redirect(url_for('index'))
+    else:
+        # the only reason why the validate_on_submit() call can fail is if the CSRF token is missing or invalid, 
+        # so in that case we just redirect the application back to the home page.
         return redirect(url_for('index'))
