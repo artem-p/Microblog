@@ -3,13 +3,24 @@ from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from datetime import datetime
 from app import app, db
-from app.forms import EditProfileForm, EmptyForm, LoginForm, RegistrationForm
-from app.models import User
+from app.forms import EditProfileForm, LoginForm, RegistrationForm, PostForm
+from app.models import Post, User
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    form = PostForm()
+    
+    if form.validate_on_submit():
+        post = Post(body=form.post.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post is now live')
+
+        # https://en.wikipedia.org/wiki/Post/Redirect/Get
+        return redirect(url_for('index'))
+
     posts = [
         {
             'author': {'username': 'John'},
@@ -21,7 +32,7 @@ def index():
         }
     ]
 
-    return render_template('index.html', title='Home', posts=posts)
+    return render_template('index.html', title='Home', form=form, posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
