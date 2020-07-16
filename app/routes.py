@@ -3,7 +3,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from datetime import datetime
 from app import app, db
-from app.forms import EditProfileForm, LoginForm, RegistrationForm
+from app.forms import EditProfileForm, EmptyForm, LoginForm, RegistrationForm
 from app.models import User
 
 @app.route('/')
@@ -113,3 +113,27 @@ def edit_profile():
         form.about_me.data = current_user.about_me
 
     return render_template('edit_profile.html', title='Edit Profile', form=form)
+
+
+@app.route('/follow/<username>', methods=['POST'])
+@login_required
+def follow(username):
+    form = EmptyForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
+
+        if user is not None:
+            if user is not current_user:
+                current_user.follow(user)
+                db.session.commit()
+                flash('You are following {}!'.format(username))
+                return redirect(url_for('user', username=username))
+            else:
+                flash('You cannot follow yourself!')
+                return redirect(url_for('user', username=username))
+        else:
+            flash('User {} not found.'.format(username))
+            return redirect(url_for('index'))
+    else:
+        return redirect(url_for('index'))
