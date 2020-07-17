@@ -21,16 +21,7 @@ def index():
         # https://en.wikipedia.org/wiki/Post/Redirect/Get
         return redirect(url_for('index'))
 
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
+    posts = current_user.followed_posts().all()
 
     return render_template('index.html', title='Home', form=form, posts=posts)
 
