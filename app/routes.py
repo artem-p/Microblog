@@ -3,7 +3,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from datetime import datetime
 from app import app, db
-from app.forms import EditProfileForm, LoginForm, RegistrationForm, PostForm
+from app.forms import EditProfileForm, EmptyForm, LoginForm, PostForm, RegistrationForm
 from app.models import Post, User
 
 @app.route('/', methods=['GET', 'POST'])
@@ -169,3 +169,10 @@ def unfollow(username):
         # the only reason why the validate_on_submit() call can fail is if the CSRF token is missing or invalid, 
         # so in that case we just redirect the application back to the home page.
         return redirect(url_for('index'))
+
+
+@app.route('/explore')
+@login_required
+def explore():
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template('index.html', title='Explore')
