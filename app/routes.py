@@ -21,7 +21,7 @@ def index():
         # https://en.wikipedia.org/wiki/Post/Redirect/Get
         return redirect(url_for('index'))
 
-    posts = request.args.get('page', 1, type=int)
+    page = request.args.get('page', 1, type=int)
 
     posts = current_user.followed_posts().paginate(page, app.config['POSTS_PER_PAGE'], False)
 
