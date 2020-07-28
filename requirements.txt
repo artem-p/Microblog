@@ -9,3 +9,4 @@ flask-mail
 pyjwt
 flask-bootstrap
 flask-moment
+guess_language-spirit
